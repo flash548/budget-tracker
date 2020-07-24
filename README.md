@@ -45,4 +45,4 @@ will be all three of these layers containerized into a Docker service capable of
 # Mockup
 
 
-![Image of ERD](https://github.com/flash548/budget_tracker/blob/master/mock.png)
+![Image of ERD](https://github.com/flash548/budget-tracker/blob/master/mock.png)
