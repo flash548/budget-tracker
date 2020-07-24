@@ -42,3 +42,7 @@ will be all three of these layers containerized into a Docker service capable of
 * User shall be able to search over a given time period parametrically (by any combination of remarks, amount ranges, category) and be able to view those results.
 * The results for this search shall be able to be viewed in the same view/summary as any other time period in order to see what the amounts were in each category etc in order to allow trends analysis.
 
+# Mockup
+
+
+![Image of ERD](https://github.com/flash548/budget_tracker/blob/master/mock.png)
