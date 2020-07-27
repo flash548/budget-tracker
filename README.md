@@ -88,13 +88,17 @@ The backend API consists of the following endpoints by-method:
 
 * **/categories/add/`category-name`**
 
-    * Adds a new category, (API won't allow duplicate categories)
+    * Adds a new category, (API won't allow duplicate categories).  Returns new list of categories
 
-* **/categories/`category-name`/range/low-percent/high-percent**
+* **/ranges/`category-name`/low-percent/high-percent**
 
-    * Adds (or changes) the percentage range for a given category
+    * Adds (or changes) the percentage range for a given category.  Returns new list of categories vs. ranges
 
 ## DELETE
+
+* **/tranactions/remove/`transaction-id`**
+
+    * Deletes a transaction from the db by its `transaction-id`
 
 * **/categories/remove/`category-name`**
 
