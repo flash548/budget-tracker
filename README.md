@@ -51,3 +51,51 @@ will be all three of these layers containerized into a Docker service capable of
 # Entity Relationship Diagram
 
 ![Image of ERD](https://github.com/flash548/budget-tracker/blob/master/db/erd.png)
+
+
+# API
+
+The backend API consists of the following endpoints by-method:
+
+## GET
+* **/categories**
+
+    * Lists all categories in the db
+
+* **/income**
+
+    * Returns the set income saved in the db (from the `settings` table)
+
+* **/ranges**
+
+    * Returns the user configured income/category ranges from the (`ranges`) table
+
+## POST 
+* **/transactions**
+    * Returns all transactions matching requested criteria in POST body
+    * Body format:
+    ```
+    {
+        category: [ ..., ... ],
+        fromAmount: X.yy,
+        toAmount: X.yy,
+        fromDate: YYYY-MM-DD,
+        toDate: YYYY-MM-DD,
+    }   
+    ```
+    * If any field is `null`, then that field is a "wildcard" (e.g. * for category would imply all categories, etc)
+## PATCH
+
+* **/categories/add/`category-name`**
+
+    * Adds a new category, (API won't allow duplicate categories)
+
+* **/categories/`category-name`/range/low-percent/high-percent**
+
+    * Adds (or changes) the percentage range for a given category
+
+## DELETE
+
+* **/categories/remove/`category-name`**
+
+    * Deletes a category from the db and its associated range from the `ranges` table
