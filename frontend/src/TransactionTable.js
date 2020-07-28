@@ -24,6 +24,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import Options from './Options';
 
 
 
@@ -86,7 +87,10 @@ class TransactionTable extends React.Component {
         console.log(this.state.currentData);
         return (
             <Container maxWidth="sm">
+                
                 <TopBar parent={this}/>
+                <Options parent={this}/>
+
                 <TableContainer component={Paper}>
                 <Table size="small">
                     <TableHead>
