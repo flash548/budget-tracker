@@ -149,6 +149,9 @@ public class BudgetController {
         // make sure category exists
         if (!catsIds.values().contains(name)) { resp.setStatus(500); return null; }
 
+        // disallow removal of the Income special category
+        if (name.equals("Income")) { resp.setStatus(500); return null;}
+
         try {
             Long id = -1L;
             for (Long i : catsIds.keySet()) {

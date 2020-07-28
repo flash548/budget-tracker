@@ -54,6 +54,7 @@ insert into categories (category) values ('Recreation');
 insert into categories (category) values ('Personal');
 insert into categories (category) values ('Insurance');
 insert into categories (category) values ('Savings');
+insert into categories (category) values ('Income');
 
 -- Seed initial categorie ranges for a given month
 insert into ranges (category, low, high) values ((select id from categories where category = 'Transportation'), 10, 15);
