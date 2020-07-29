@@ -28,6 +28,7 @@ class TransactionTable extends React.Component {
 
     constructor(props) {
         super(props);
+        this.host = props.host || "http://localhost:8080";
         this.initial = true;
         this.state = {
             categories: [],
@@ -53,16 +54,16 @@ class TransactionTable extends React.Component {
     doDataPull = async () => {
 
         // pull down the category names...
-        let categoriesResp = await fetch("http://localhost:8080/categories");
+        let categoriesResp = await fetch(`${this.host}/categories`);
         let categoriesData = await categoriesResp.json();
         categoriesData = categoriesData.map(x=> x.category);
 
         // pull down the category ranges...
-        let rangesResp = await fetch("http://localhost:8080/ranges");
+        let rangesResp = await fetch(`${this.host}/ranges`);
         let rangesData = await rangesResp.json();
 
         // pull down the transaction data...
-        let resp = await fetch("http://localhost:8080/transactions",
+        let resp = await fetch(`${this.host}/transactions`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -119,7 +120,7 @@ class TransactionTable extends React.Component {
 
     // db CRUD functions...
     submitTransaction = async (trans) => {
-        let resp = await fetch("http://localhost:8080/transactions/add",
+        let resp = await fetch(`${this.host}/transactions/add`,
         {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
@@ -136,7 +137,7 @@ class TransactionTable extends React.Component {
         } 
     }
     submitUpdateTransaction = async () => {
-        let resp = await fetch("http://localhost:8080/transactions/update",
+        let resp = await fetch(`${this.host}/transactions/update`,
         {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
@@ -154,7 +155,7 @@ class TransactionTable extends React.Component {
     }
     deleteTrans = async (event) => {
         if (window.confirm("Are you sure you want to delete this transaction?")) {
-            let resp = await fetch("http://localhost:8080/transactions/remove/" + event.currentTarget.id,
+            let resp = await fetch(`${this.host}/transactions/remove/` + event.currentTarget.id,
             {
                     method: 'DELETE',
             });
@@ -184,7 +185,7 @@ class TransactionTable extends React.Component {
     }
     deleteCategory = async (cat) => {
         if (window.confirm("Are you sure you want to delete this category and all its transactions!?")) {
-            let resp = await fetch("http://localhost:8080/categories/remove/" + cat,
+            let resp = await fetch(`${this.host}/categories/remove/` + cat,
             {
                     method: 'DELETE',
             });
@@ -210,7 +211,7 @@ class TransactionTable extends React.Component {
                 return;
             }
 
-            let resp = await fetch("http://localhost:8080/categories/rename/" + data.oldName + "/" + data.newName,
+            let resp = await fetch(`${this.host}/categories/rename/` + data.oldName + "/" + data.newName,
                 {
                     method: 'PATCH',
                 });
@@ -232,7 +233,7 @@ class TransactionTable extends React.Component {
             return;
         }
 
-        let resp = await fetch("http://localhost:8080/ranges/update/" + data.newName + "/" + data.newLow + "/" + data.newHigh,
+        let resp = await fetch(`${this.host}/ranges/update/` + data.newName + "/" + data.newLow + "/" + data.newHigh,
             {
                 method: 'PATCH',
             });
@@ -254,7 +255,7 @@ class TransactionTable extends React.Component {
             return;
         }
 
-        let resp = await fetch("http://localhost:8080/categories/add/" + data.newName,
+        let resp = await fetch(`${this.host}/categories/add/` + data.newName,
             {
                 method: 'PATCH',
             });
@@ -274,7 +275,7 @@ class TransactionTable extends React.Component {
             return;
         }
         console.log(data);
-        resp = await fetch("http://localhost:8080/ranges/add/" + data.newName + "/" + data.newLow + "/" + data.newHigh,
+        resp = await fetch(`${this.host}/ranges/add/` + data.newName + "/" + data.newLow + "/" + data.newHigh,
             {
                 method: 'PATCH',
             });
