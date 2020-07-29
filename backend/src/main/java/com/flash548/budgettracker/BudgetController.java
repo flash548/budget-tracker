@@ -151,6 +151,56 @@ public class BudgetController {
 
     }
 
+    @PatchMapping("/transactions/update")
+    public Transaction updateTransaction(@RequestBody ResolvedTransaction newTrans, HttpServletResponse resp) {
+
+        Transaction t = new Transaction();
+        t.setId(newTrans.getId());
+        System.out.println(t.getId());
+        t.setDate(newTrans.getDate());
+        System.out.println(t.getDate());
+        t.setAmount(newTrans.getAmount());
+        System.out.println(t.getAmount());
+        t.setRemarks(newTrans.getRemarks());
+        System.out.println(t.getRemarks());
+        // now resolved category name to its ID
+        Map<Long, String> catsIds = this.getCatHash();
+
+        // make sure category even existed first, otherwise fail out now
+        if (!catsIds.values().contains(newTrans.getCategory())) {
+            resp.setStatus(500);
+            return null;
+        }
+
+        // TODO: refactor this into a function
+        Long catId = -1L;
+        for (Long id : catsIds.keySet()) {
+            if (catsIds.get(id).equals(newTrans.getCategory())) {
+                catId = id;
+                break;
+            }
+        }
+
+        // if somehow didn't find the category ID, then fail out now.
+        if (catId == -1L) {
+            resp.setStatus(500);
+            return null;
+        }
+
+        // TODO: need to fix this
+        t.setCategory(catId.intValue());
+
+        try {
+            return this.transactionRespository.save(t);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            resp.setStatus(500);
+            return null;
+        }
+
+    }
+
     @PatchMapping("/categories/add/{name}")
     public Iterable<Category> addCategory(@PathVariable String name, HttpServletResponse resp) {
         Category newCategory = new Category();

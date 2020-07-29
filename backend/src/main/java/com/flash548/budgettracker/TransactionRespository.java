@@ -1,7 +1,9 @@
 package com.flash548.budgettracker;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -15,6 +17,5 @@ public interface TransactionRespository extends CrudRepository<Transaction, Long
 
     @Query(value=tranQuery, nativeQuery = true)
     public Transaction[] searchTransactions(Iterable<String> categories, Float fromAmount, Float toAmount, Date fromDate, Date toDate);
-
 
 }

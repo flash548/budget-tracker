@@ -107,12 +107,30 @@ The backend API consists of the following endpoints by-method:
     }
     ```
 
+    Returns the new transaction record with its assigned `id`.
+
+* **/transactions/update/`id`**
+
+    * Edits/Updates an existing transaction by its `id`.  Request body has the following structure:
+
+    ```
+    {
+        id: transaction id,
+        category: category-name,
+        date: yyyy-MM-dd,
+        amount: $.$$,
+        remarks: ...
+    }
+    ```
+
+    Returns the edited transaction record.
+
 ## DELETE
 
 * **/tranactions/remove/`transaction-id`**
 
-    * Deletes a transaction from the db by its `transaction-id`
+    * Deletes a transaction from the db by its `transaction-id`.  Returns the deleted record.
 
 * **/categories/remove/`category-name`**
 
-    * Deletes a category from the db and its associated range from the `ranges` table
+    * Deletes a category from the db and its associated range from the `ranges` table.  Returns a list of remaining categories still in the db.

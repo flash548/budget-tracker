@@ -16,7 +16,8 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert'
+import MuiAlert from '@material-ui/lab/Alert';
+import EditTransaction from './EditTransaction';
 
 // custom control taken from Material UI website example...
 function Alert(props) {
@@ -38,6 +39,8 @@ class TransactionTable extends React.Component {
             currentData: [],
             successToast: false,
             failureToast: false,
+            openEditDlg: false,
+            currentRecord: {},
         };
     }
 
@@ -134,6 +137,28 @@ class TransactionTable extends React.Component {
             return false; 
         } 
     }
+    submitUpdateTransaction = async () => {
+        let resp = await fetch("http://localhost:8080/transactions/update",
+        {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.state.currentRecord),                
+        });
+
+        if (resp.status === 200) {
+            await resp.json();
+            await this.doDataPull();
+            this.openSuccessToast("Record Updated!");
+        }
+        else {
+            return this.openFailureToast("Failed to Update Entry!");
+        } 
+    }
+    updateCurrentRecordCategory = (category) => { this.setState({currentRecord: {...this.state.currentRecord, category: category }})}
+    updateCurrentRecordDate = (date) => { this.setState({currentRecord: {...this.state.currentRecord, date: date }})}
+    updateCurrentRecordAmount = (amount) => { this.setState({currentRecord: {...this.state.currentRecord, amount: amount }})}
+    updateCurrentRecordRemarks = (remarks) => { this.setState({currentRecord: {...this.state.currentRecord, remarks: remarks }})}
+
     deleteTrans = async (event) => {
         if (window.confirm("Are you sure you want to delete this transaction?")) {
             let resp = await fetch("http://localhost:8080/transactions/remove/" + event.currentTarget.id,
@@ -152,7 +177,20 @@ class TransactionTable extends React.Component {
         }
     }
     editTrans =  (event) => {
+        let currentRecord = {};
+        for (let rec of this.state.currentData) {
+            if (rec.id == event.currentTarget.id) {
+                currentRecord = {...rec};
+                this.setState({currentRecord: currentRecord, openEditDlg: true});
+                return;
+            }
+        }
 
+        this.setState({openEditDlg: false});
+        
+    }
+    closeEditDlg = () => {
+        this.setState({openEditDlg: false, currentRecord: {}});
     }
     changeFromDate = (event) => { this.setState( { fromDate: event.target.value } ) }
     changeToDate = (event) => { this.setState( { toDate: event.target.value } ) }
@@ -272,6 +310,7 @@ class TransactionTable extends React.Component {
                             {this.state.message}
                         </Alert>
                     </Snackbar>
+                    <EditTransaction parent={this} open={this.state.openEditDlg} record={this.state.currentRecord} />
             </Container>
         );
     }

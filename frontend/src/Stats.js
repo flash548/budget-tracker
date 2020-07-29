@@ -41,13 +41,13 @@ export default function Stats(props) {
           </AccordionSummary>
           <AccordionDetails> 
             <div  className={classes.root}>
-            <Grid container align="center" justify="center" spacing={3}>
+            <Grid container align="center" justify="center" spacing={1}>
                 {
                     props.parent.state.ranges ? 
                         props.parent.state.ranges.map(x => 
                             (  
                                 <Grid item xs={12} key={counter++}>
-                                <Alert variant="filled" severity={
+                                <Alert style={{padding: 'none'}} variant="filled" severity={
                                     (props.parent.state.percentages[x.category] < x.low ? "success" :
                                         x.low <= props.parent.state.percentages[x.category] && props.parent.state.percentages[x.category] <= x.high ? "warning" :
                                         "error")}>
