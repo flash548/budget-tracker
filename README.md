@@ -90,9 +90,17 @@ The backend API consists of the following endpoints by-method:
 
     * Adds a new category, (API won't allow duplicate categories).  Returns new list of categories
 
-* **/ranges/`category-name`/low-percent/high-percent**
+* **/categories/rename/`category-name`/`new-name`**
 
-    * Adds (or changes) the percentage range for a given category.  Returns new list of categories vs. ranges
+    * Renames an existing category, (API won't allow duplicate categories names).  Returns new list of categories
+
+* **/ranges/update/`category-name`/low-percent/high-percent**
+
+    * Updates the percentage range for a given category.  Returns new list of categories vs. ranges
+
+* **/ranges/add/`category-name`/low-percent/high-percent**
+
+    * Adds a new percentage range for a given category.  Returns new list of categories vs. ranges
 
 * **/transactions/add**
 
@@ -134,3 +142,4 @@ The backend API consists of the following endpoints by-method:
 * **/categories/remove/`category-name`**
 
     * Deletes a category from the db and its associated range from the `ranges` table.  Returns a list of remaining categories still in the db.
+    * WARNING: Right now deleting a category CASCADES the deletion - so anything that's tagged with that category also gets deleted!

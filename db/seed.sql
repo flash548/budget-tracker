@@ -26,7 +26,7 @@ create table ranges (
     category INTEGER NOT NULL,
     low FLOAT NOT NULL,
     high FLOAT NOT NULL,
-    FOREIGN KEY (category) REFERENCES categories (id)
+    FOREIGN KEY (category) REFERENCES categories (id) ON DELETE CASCADE
 );
 
 -- Place to list transactions
@@ -36,7 +36,7 @@ create table transactions (
     date DATE NOT NULL,
     amount DECIMAL(8,2),
     remarks TEXT,
-    FOREIGN KEY (category) REFERENCES categories (id)
+    FOREIGN KEY (category) REFERENCES categories (id) ON DELETE CASCADE
 );
 
 -- seed initial household income to some number

@@ -1,23 +1,23 @@
 import Container from '@material-ui/core/Container';
+import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
+import Snackbar from '@material-ui/core/Snackbar';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import MuiAlert from '@material-ui/lab/Alert';
 import { format } from 'date-fns';
 import React from 'react';
 import './App.css';
-import Options from './Options';
-import TopBar from './TopBar.js';
-import Stats from './Stats.js';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
 import EditTransaction from './EditTransaction';
+import Options from './Options';
+import Stats from './Stats.js';
+import TopBar from './TopBar.js';
 
 // custom control taken from Material UI website example...
 function Alert(props) {
@@ -105,9 +105,6 @@ class TransactionTable extends React.Component {
                 percentages[cat] = percentage;
             }
 
-            console.log(totals);
-            console.log(percentages);
-
             this.setState( { activeCategories: (this.initial) ? categoriesData : this.state.activeCategories,
                  categories: categoriesData, currentData: data, ranges: rangesData, totals: totals, percentages: percentages });
         }
@@ -120,6 +117,7 @@ class TransactionTable extends React.Component {
         this.initial = false;
     }
 
+    // db CRUD functions...
     submitTransaction = async (trans) => {
         let resp = await fetch("http://localhost:8080/transactions/add",
         {
@@ -154,11 +152,6 @@ class TransactionTable extends React.Component {
             return this.openFailureToast("Failed to Update Entry!");
         } 
     }
-    updateCurrentRecordCategory = (category) => { this.setState({currentRecord: {...this.state.currentRecord, category: category }})}
-    updateCurrentRecordDate = (date) => { this.setState({currentRecord: {...this.state.currentRecord, date: date }})}
-    updateCurrentRecordAmount = (amount) => { this.setState({currentRecord: {...this.state.currentRecord, amount: amount }})}
-    updateCurrentRecordRemarks = (remarks) => { this.setState({currentRecord: {...this.state.currentRecord, remarks: remarks }})}
-
     deleteTrans = async (event) => {
         if (window.confirm("Are you sure you want to delete this transaction?")) {
             let resp = await fetch("http://localhost:8080/transactions/remove/" + event.currentTarget.id,
@@ -189,9 +182,123 @@ class TransactionTable extends React.Component {
         this.setState({openEditDlg: false});
         
     }
+    deleteCategory = async (cat) => {
+        if (window.confirm("Are you sure you want to delete this category and all its transactions!?")) {
+            let resp = await fetch("http://localhost:8080/categories/remove/" + cat,
+            {
+                    method: 'DELETE',
+            });
+
+            if (resp.status === 200) {
+                await resp.json();
+                await this.doDataPull();
+                this.openSuccessToast("Category Deleted");
+            }
+            else {
+                this.openFailureToast("Failed to Delete Category!");
+            }  
+        }
+    }
+    editCategoryNameRange = async (data) => {
+
+        // first see if we have a name change
+        if (data.oldName !== data.newName) {
+            // do the name change first
+            // but make sure new name isn't "Income" reserved group
+            if (data.newName == "Income") {
+                this.openFailureToast("Can't use 'Income' for a new category name!");
+                return;
+            }
+
+            let resp = await fetch("http://localhost:8080/categories/rename/" + data.oldName + "/" + data.newName,
+                {
+                    method: 'PATCH',
+                });
+
+            if (resp.status != 200) {
+                this.openFailureToast("Failed to Rename Category!");
+                return;
+            }
+        }
+
+
+        // validate the numbers
+        if (isNaN(data.newLow) || isNaN(data.newHigh)) {
+            this.openFailureToast("Invalid range numbers!");
+            return;
+        }
+        if (data.newLow >= data.newHigh) {
+            this.openFailureToast("Invalid low/high numerical range!");
+            return;
+        }
+
+        let resp = await fetch("http://localhost:8080/ranges/update/" + data.newName + "/" + data.newLow + "/" + data.newHigh,
+            {
+                method: 'PATCH',
+            });
+
+        if (resp.status != 200) {
+            this.openFailureToast("Failed to Change Category Limits!");
+        }
+        else {
+            await this.doDataPull();
+            this.openSuccessToast("Change Success!");
+        }
+
+    }
+    addNewCategoryAndRange = async (data) => {
+        // do the name change first
+        // but make sure new name isn't "Income" reserved group
+        if (data.newName == "Income") {
+            this.openFailureToast("Can't use 'Income' for a new category name!");
+            return;
+        }
+
+        let resp = await fetch("http://localhost:8080/categories/add/" + data.newName,
+            {
+                method: 'PATCH',
+            });
+
+        if (resp.status != 200) {
+            this.openFailureToast("Failed to Add New Category!");
+            return;
+        }
+
+        // validate the numbers
+        if (isNaN(data.newLow) || isNaN(data.newHigh)) {
+            this.openFailureToast("Invalid range numbers!");
+            return;
+        }
+        if (data.newLow >= data.newHigh) {
+            this.openFailureToast("Invalid low/high numerical range!");
+            return;
+        }
+        console.log(data);
+        resp = await fetch("http://localhost:8080/ranges/add/" + data.newName + "/" + data.newLow + "/" + data.newHigh,
+            {
+                method: 'PATCH',
+            });
+
+        if (resp.status != 200) {
+            this.openFailureToast("Failed to add New Category Limits!");
+        }
+        else {
+            await this.doDataPull();
+            this.openSuccessToast("Add New Category Success!");
+        }
+    }
+
+    // functions for the Edit Transaction dialog
+    updateCurrentRecordCategory = (category) => { this.setState({currentRecord: {...this.state.currentRecord, category: category }})}
+    updateCurrentRecordDate = (date) => { this.setState({currentRecord: {...this.state.currentRecord, date: date }})}
+    updateCurrentRecordAmount = (amount) => { this.setState({currentRecord: {...this.state.currentRecord, amount: amount }})}
+    updateCurrentRecordRemarks = (remarks) => { this.setState({currentRecord: {...this.state.currentRecord, remarks: remarks }})}
     closeEditDlg = () => {
         this.setState({openEditDlg: false, currentRecord: {}});
     }
+
+
+    // functions for the search/filter parameters
     changeFromDate = (event) => { this.setState( { fromDate: event.target.value } ) }
     changeToDate = (event) => { this.setState( { toDate: event.target.value } ) }
     toggleCat = (name) => {
@@ -214,6 +321,8 @@ class TransactionTable extends React.Component {
     changeToAmount = (amnt) => {
         this.setState({toAmount: (amnt)} ); 
     }
+
+    // action to refresh/restore data...
     refresh = () => { this.doDataPull(); }
     reset = () => {
        this.setState({ fromDate: format(new Date(), 'yyyy-MM-01'),
@@ -224,6 +333,7 @@ class TransactionTable extends React.Component {
        this.doDataPull();
     }
 
+    // some general purpose toast actions...
     openSuccessToast = (msg) => {
         this.setState({ message: msg, successToast: true});
     } 

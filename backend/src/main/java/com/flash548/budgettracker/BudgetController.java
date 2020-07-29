@@ -223,7 +223,84 @@ public class BudgetController {
         }
     }
 
-    @PatchMapping("/ranges/{category}/{lowPercent}/{highPercent}")
+    @PatchMapping("/categories/rename/{name}/{newName}")
+    public Iterable<Category> renameCategory(@PathVariable String name, @PathVariable String newName, HttpServletResponse resp) {
+        Category newCategory = new Category();
+        newCategory.setCategory(name);
+        Map<Long, String> catsIds = this.getCatHash();
+
+        // make sure category exists first
+        if (!catsIds.values().contains(name)) { resp.setStatus(500); return null; }
+
+        // make sure new name isn't an existing category
+        if (catsIds.values().contains(newName)) { resp.setStatus(500); return null; }
+
+        // get the id of the existing category
+        // TODO: refactor this into a function
+        Long catId = -1L;
+        for (Long id : catsIds.keySet()) {
+            if (catsIds.get(id).equals(name)) {
+                catId = id;
+                break;
+            }
+        }
+
+        // if somehow didn't find the category ID, then fail out now.
+        if (catId == -1L) {
+            resp.setStatus(500);
+            return null;
+        }
+
+        Category newCat = new Category();
+        newCat.setId(catId);
+        newCat.setCategory(newName);
+
+        try {
+            this.categoryRespository.save(newCat);
+
+            // return new list of categories
+            return this.categoryRespository.findAll();
+        }
+        catch (Exception e) {
+            resp.setStatus(500);
+            return null;
+        }
+    }
+
+    @PatchMapping("/ranges/add/{category}/{lowPercent}/{highPercent}")
+    public ResolvedRange[] addNewRange(@PathVariable String category, @PathVariable Float lowPercent,
+                                          @PathVariable Float highPercent, HttpServletResponse resp) {
+
+        Map<Long, String> catsIds = this.getCatHash();
+
+        // see if category exists first
+        if (!catsIds.values().contains(category)) { resp.setStatus(500); return null; }
+        System.out.println(lowPercent + "   " + highPercent + "  "  + category);
+
+        // TODO: refactor this into a function
+        Long catId = -1L;
+        for (Long id : catsIds.keySet()) {
+            if (catsIds.get(id).equals(category)) {
+                catId = id;
+                break;
+            }
+        }
+
+        // if somehow didn't find the category ID, then fail out now.
+        if (catId == -1L) {
+            resp.setStatus(500);
+            return null;
+        }
+
+        Range r = new Range();
+        r.setCategory(catId.intValue());
+        r.setLow(lowPercent);
+        r.setHigh(highPercent);
+        this.rangeRepository.save(r);
+        return this.getRanges();
+    }
+
+    @PatchMapping("/ranges/update/{category}/{lowPercent}/{highPercent}")
     public ResolvedRange[] addUpdateRange(@PathVariable String category, @PathVariable Float lowPercent,
                                           @PathVariable Float highPercent, HttpServletResponse resp) {
 
@@ -260,6 +337,7 @@ public class BudgetController {
             return this.categoryRespository.findAll();
         }
         catch (Exception e) {
+            System.out.println(e.getMessage());
             resp.setStatus(500);
             return null;
         }
