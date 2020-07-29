@@ -124,7 +124,7 @@ export default function EditTransaction(props) {
                 <TextField id="remarks" value={props.record.remarks} label="Remarks" onChange={handleRemarksChange}/>
             </FormControl>
             <FormControl className={classes.formControl}>
-                <Button size="small" variant="contained" color="primary" onClick={submitUpdateTransaction}>Add Transaction</Button>
+                <Button size="small" variant="contained" color="primary" onClick={submitUpdateTransaction}>Submit</Button>
                 <Button size="small" variant="contained" color="secondary" onClick={cancelTransaction}>Done</Button>
             </FormControl>
             </div>

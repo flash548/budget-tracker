@@ -96,7 +96,7 @@ export default function EditCategory(props) {
                 />
             </FormControl>            
             <FormControl className={classes.formControl}>
-                <Button size="small" variant="contained" color="primary" onClick={submitUpdateCategory}>Add Transaction</Button>
+                <Button size="small" variant="contained" color="primary" onClick={submitUpdateCategory}>Submit</Button>
                 <Button size="small" variant="contained" color="secondary" onClick={cancelTransaction}>Done</Button>
             </FormControl>
             </div>
