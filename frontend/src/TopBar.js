@@ -136,6 +136,8 @@ export default function TopBar(props) {
         return <MuiAlert elevation={6} variant="filled" {...props} />;
     }
 
+    var counter = 0;
+
     return (
         <AppBar position="static">
         <Grid container justify="space-around">
@@ -167,7 +169,7 @@ export default function TopBar(props) {
                             {
                                 props.parent.state.categories.map(x=> {
                                     return (
-                                        <option value={x}>{x}</option>
+                                        <option key={counter++} value={x}>{x}</option>
                                     )
                                 })
                             }

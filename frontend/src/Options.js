@@ -60,6 +60,7 @@ export default function Options(props) {
     const handleHighAmountChange = (event) => { props.parent.changeToAmount(event.target.value) };
     const handleOnFocus = (event) => { event.target.select(); }
 
+    var counter = 0;
     return (
       <div>
         <Accordion className={classes.root}>
@@ -107,7 +108,7 @@ export default function Options(props) {
                     { 
                         props.parent.state.categories.map((x) => { 
                         return (
-                            <FormControlLabel
+                            <FormControlLabel key={counter++} 
                                 control={ 
                                     <Checkbox checked={props.parent.state.activeCategories.includes(x)}
                                         name={x} 

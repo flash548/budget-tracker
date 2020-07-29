@@ -94,6 +94,19 @@ The backend API consists of the following endpoints by-method:
 
     * Adds (or changes) the percentage range for a given category.  Returns new list of categories vs. ranges
 
+* **/transactions/add**
+
+    * Adds a transaction.  Request body has the following structure:
+    
+    ```
+    {
+        category: category-name,
+        date: yyyy-MM-dd,
+        amount: $.$$,
+        remarks: ...
+    }
+    ```
+
 ## DELETE
 
 * **/tranactions/remove/`transaction-id`**

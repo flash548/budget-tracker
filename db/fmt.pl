@@ -5,7 +5,7 @@
 use v6;
 use Time::Piece:from<Perl5>;
 
-my @in-lines = slurp("data1.csv").lines;
+my @in-lines = slurp("data2.csv").lines;
 my $out = open "transactions.sql", :w;
 
 for @in-lines -> $line {
