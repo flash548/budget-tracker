@@ -107,6 +107,50 @@ public class BudgetController {
         return resTrans;
     }
 
+    @PatchMapping("/transactions/add")
+    public Transaction addNewTransaction(@RequestBody ResolvedTransaction newTrans, HttpServletResponse resp) {
+
+        Transaction t = new Transaction();
+        t.setDate(newTrans.getDate());
+        t.setAmount(newTrans.getAmount());
+        t.setRemarks(newTrans.getRemarks());
+        // now resolved category name to its ID
+        Map<Long, String> catsIds = this.getCatHash();
+
+        // make sure category even existed first, otherwise fail out now
+        if (!catsIds.values().contains(newTrans.getCategory())) {
+           resp.setStatus(500);
+           return null;
+        }
+
+        // TODO: refactor this into a function
+        Long catId = -1L;
+        for (Long id : catsIds.keySet()) {
+            if (catsIds.get(id).equals(newTrans.getCategory())) {
+                catId = id;
+                break;
+            }
+        }
+
+        // if somehow didn't find the category ID, then fail out now.
+        if (catId == -1L) {
+            resp.setStatus(500);
+            return null;
+        }
+
+        // TODO: need to fix this
+        t.setCategory(catId.intValue());
+
+        try {
+            return this.transactionRespository.save(t);
+        }
+        catch (Exception e) {
+            resp.setStatus(500);
+            return null;
+        }
+
+    }
+
     @PatchMapping("/categories/add/{name}")
     public Iterable<Category> addCategory(@PathVariable String name, HttpServletResponse resp) {
         Category newCategory = new Category();
