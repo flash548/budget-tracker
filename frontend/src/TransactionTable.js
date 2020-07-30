@@ -28,7 +28,7 @@ class TransactionTable extends React.Component {
 
     constructor(props) {
         super(props);
-        this.host = props.host || "http://localhost:8080";
+        this.host = props.host || (process.env.NODE_ENV === 'production' ? "<prod url here>" : "http://localhost:8080");
         this.initial = true;
         this.state = {
             categories: [],
@@ -202,6 +202,16 @@ class TransactionTable extends React.Component {
     }
     editCategoryNameRange = async (data) => {
 
+        // validate the numbers
+        if (isNaN(data.newLow) || isNaN(data.newHigh)) {
+            this.openFailureToast("Invalid range numbers!");
+            return;
+        }
+        if (Number(data.newLow) >= Number(data.newHigh)) {
+            this.openFailureToast("Invalid low/high numerical range!");
+            return;
+        }
+
         // first see if we have a name change
         if (data.oldName !== data.newName) {
             // do the name change first
@@ -222,17 +232,6 @@ class TransactionTable extends React.Component {
             }
         }
 
-
-        // validate the numbers
-        if (isNaN(data.newLow) || isNaN(data.newHigh)) {
-            this.openFailureToast("Invalid range numbers!");
-            return;
-        }
-        if (data.newLow >= data.newHigh) {
-            this.openFailureToast("Invalid low/high numerical range!");
-            return;
-        }
-
         let resp = await fetch(`${this.host}/ranges/update/` + data.newName + "/" + data.newLow + "/" + data.newHigh,
             {
                 method: 'PATCH',
@@ -248,6 +247,16 @@ class TransactionTable extends React.Component {
 
     }
     addNewCategoryAndRange = async (data) => {
+        // validate the numbers
+        if (isNaN(data.newLow) || isNaN(data.newHigh)) {
+            this.openFailureToast("Invalid range numbers!");
+            return;
+        }
+        if (Number(data.newLow) >= Number(data.newHigh)) {
+            this.openFailureToast("Invalid low/high numerical range!");
+            return;
+        }
+
         // do the name change first
         // but make sure new name isn't "Income" reserved group
         if (data.newName == "Income") {
@@ -265,16 +274,6 @@ class TransactionTable extends React.Component {
             return;
         }
 
-        // validate the numbers
-        if (isNaN(data.newLow) || isNaN(data.newHigh)) {
-            this.openFailureToast("Invalid range numbers!");
-            return;
-        }
-        if (data.newLow >= data.newHigh) {
-            this.openFailureToast("Invalid low/high numerical range!");
-            return;
-        }
-        console.log(data);
         resp = await fetch(`${this.host}/ranges/add/` + data.newName + "/" + data.newLow + "/" + data.newHigh,
             {
                 method: 'PATCH',

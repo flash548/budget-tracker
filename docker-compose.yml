@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  # frontend:
+  #   build: frontend/build/
+  #   container_name: frontend
+  #   environment:
+  #     HOST_BACK: ${HOST_BACK}
+  #     PORT_BACK: ${PORT_BACK}
+  #     HOST_FRONT: ${HOST_FRONT}
+  #     PORT_FRONT: ${PORT_FRONT}
+  #   depends_on:
+  #     - 'backend'
+  #   ports:
+  #     - ${PORT_FRONT}:${PORT_FRONT}
+
+  backend:
+    build: backend/
+    container_name: backend
+    environment:
+      HOST_BACK: ${HOST_BACK}
+      PORT_BACK: ${PORT_BACK}
+    depends_on:
+      - 'database'
+    ports:
+      - "${PORT_BACK}:${PORT_BACK}"
+
+  database:
+    image: mysql
+    container_name: appdb
+    volumes:
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_PASSWORD: "password"
+      MYSQL_USER: "user"
+      MYSQL_DB: "budget"
+    ports:
+      - 3306:3306
+
