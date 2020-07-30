@@ -9,7 +9,7 @@ if [ -z $PORT_BACK ]; then
 fi;
 
 if [ -z $PORT_FRONT ]; then
-    PORT_FRONT=3001;
+    PORT_FRONT=80;
     export PORT_FRONT;
 fi;
 
