@@ -71,7 +71,9 @@ class TransactionTable extends React.Component {
             body: JSON.stringify({
                 categories: this.initial
                     ? categoriesData
-                    : this.state.activeCategories,
+                    : (this.state.activeCategories.includes("Income") ? 
+                        this.state.activeCategories :
+                        this.state.activeCategories.concat(["Income"])),
                 fromAmount: this.state.fromAmount,
                 toAmount: this.state.toAmount,
                 fromDate: this.state.fromDate,
@@ -98,13 +100,12 @@ class TransactionTable extends React.Component {
                     totals[cat] = 0.0;
                 }
             }
-
             if (!Object.keys(totals).includes("Income")) {
                 // somehow the totals object didn't have Income
                 // so make it like 0.01 to avoid a later divide by zero error
+                
                 totals["Income"] = 0.01;
             }
-
             for (let cat in totals) {
                 if (cat === "Income") continue;
                 let percentage = (

@@ -122,7 +122,8 @@ export default function Stats(props) {
                         <Table width="100%" padding="none" size="small">
                             <TableBody>
                                 {props.parent.state.ranges ? (
-                                    props.parent.state.ranges.filter(x=> props.parent.state.activeCategories.includes(x.category))
+                                    props.parent.state.ranges
+                                        .filter(x=> props.parent.state.activeCategories.includes(x.category) || x.category === "Income")
                                         .map((x) => (
                                         <TableRow
                                             style={{
