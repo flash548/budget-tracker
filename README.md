@@ -45,7 +45,8 @@ will be all three of these layers containerized into a Docker service capable of
 # Mockup
 
 
-![Image of Mock](https://github.com/flash548/budget-tracker/blob/master/mock.png)
+![Image of Screenshot1](https://github.com/flash548/budget-tracker/blob/master/screen1.png)
+![Image of Screenshot2](https://github.com/flash548/budget-tracker/blob/master/screen2.png)
 
 
 # Entity Relationship Diagram
